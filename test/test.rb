@@ -9,10 +9,10 @@ require 'mysql'
 require "#{MY_DIR}/fixtures"
 require "#{MY_DIR}/../mysql_blob_streaming"
 
+Fixtures.insert
+
 class MysqlBlobStreamingTest < Test::Unit::TestCase
 	def setup
-		Fixtures.insert
-
   	FileUtils.rm_rf TMP_DIR
   	FileUtils.mkdir TMP_DIR
 
@@ -139,6 +139,7 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
 	end
 
   def test_stream_really_big_blobs
+####stream('big', io_of('big'))
     assert true
   end
 
@@ -152,7 +153,7 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
 		assert true
 	end
 	
-	# Helpers
+	# Helpera
 	def stream(id, output, buffer_size = 65000)
 		@stmt.file = File.new(output, 'w')
 		@stmt.execute id
