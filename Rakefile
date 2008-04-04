@@ -41,7 +41,25 @@ end
 desc 'Install GEM'
 task :install => :gem do
 	Dir.chdir MY_DIR do
-		sh 'sudo gem uninstall mysql_blob_streaming'
-		sh 'sudo gem install mysql_blob_streaming'
+		%w|uninstall install|.each do |action|
+			sh "sudo gem #{action} mysql_blob_streaming"
+		end
+	end
+end
+
+desc 'Update SQL-dump'
+task :update_dump do
+	dump = "#{MY_DIR}/test/fixtures.sql" 
+
+	if File.exist?(dump)
+		FileUtils.mv dump, "#{dump}.bak"
+	end
+
+	Rake::Task[:test].invoke
+
+	if File.exist?(dump)
+		FileUtils.rm "#{dump}.bak"
+	else
+		FileUtils.mv "#{dump}.bak", dump
 	end
 end
