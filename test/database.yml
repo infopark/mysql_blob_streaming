@@ -1,0 +1,8 @@
+---
+adapter: mysql
+database: mysql_blob_streaming
+username: mbs
+password: mbs
+encoding: utf8
+allow_concurrency: false
+...

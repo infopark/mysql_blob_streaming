@@ -1,0 +1,51 @@
+= A blob streaming extension for native Ruby-MySQL adaptor
+
+MysqlBlobStreaming is a Ruby module written in C, which provides the ability of streaming blobs out of the MySQL database.
+It extends the native Ruby-MySQL adapter and uses the MySQL's C-API to provide additional functionality.
+
+== Dependencies
+
+  * Ruby-headers
+  * MySQL-headers
+  * Native Ruby-MySQL adaptor (http://www.tmtm.org/en/mysql/ruby)
+
+== Installation
+
+Install it like any other Gem:
+
+  $ gem install mysql_blob_streaming-X.X.X.gem
+
+Run it with root privileges if needed.
+
+== Usage
+
+Create a Statement object:
+
+  require 'mysql'
+  mysql = Mysql.new('localhost', 'mysqluser', 'mysqlpassword', 'testdatabase')
+  stmt = mysql.prepare("SELECT data FROM blobs WHERE id = ?")
+
+Extend it with the module MysqlBlobStreaming to provide the additional functionality:
+
+  require 'mysql_blob_streaming'
+  stmt.extend(MysqlBlobStreaming)
+
+Implement the helper methods, which  will be called to handle the fetched partial data and to log the progress status:
+
+  class << stmt
+    def handle_data(data)
+      # 'data' is the fetched data from MySQL databases
+    end
+
+    def log_progress(pct)
+      # 'pct' is the progress status in procent
+    end
+  end
+
+Now you are able to stream the blob. You can do it with the method <code>stream(size)</code>. 
+The <code>size</code> parameter specifies the buffer size for each fetch.
+
+Execute the statement and stream the blob with buffer size of 1 megabyte:
+  
+  stmt.execute(1234)
+  stmt.stream(1048576)
