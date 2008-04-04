@@ -56,7 +56,7 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
   	output = "#{TMP_DIR}/buffer_null"
 
   	@stmt.file = File.new(output, 'w')
-  	@stmt.execute 'medium'
+  	@stmt.execute 'first'
   	@stmt.stream 0
 
   	assert_equal('', File.read(output))
@@ -66,7 +66,7 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
   	output = "#{TMP_DIR}/buffer_less_null"
 
   	@stmt.file = File.new(output, 'w')
-  	@stmt.execute 'medium'
+  	@stmt.execute 'first'
 
   	assert_raise RuntimeError do
   		@stmt.stream -123
@@ -85,17 +85,17 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
 
 	def test_buffer_has_specified_size
 		output = "#{TMP_DIR}/known_size"
-		input_size = File.size("#{FIX_DIR}/medium.blob")
+		input_size = File.size("#{FIX_DIR}/first")
 
 		@stmt.file = File.new(output, 'w')
-		@stmt.execute 'medium'
+		@stmt.execute 'first'
 		@stmt.stream 1
 		@stmt.file.close
 
 		assert_equal(input_size, @stmt.counter)
 
 		@stmt.file = File.new(output, 'w')
-		@stmt.execute 'medium'
+		@stmt.execute 'first'
 		@stmt.reset
 		@stmt.stream input_size
 		@stmt.file.close
@@ -105,10 +105,10 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
 
 	def test_stream_blob_less_than_buffer
 		output = "#{TMP_DIR}/less_than_buffer"
-    input = "#{FIX_DIR}/medium.blob"
+    input = "#{FIX_DIR}/first"
 
 		@stmt.file = File.new(output, 'w')
-		@stmt.execute 'medium'
+		@stmt.execute 'first'
 		@stmt.stream(File.size(input) * 100)
 		@stmt.file.close
 
@@ -117,10 +117,10 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
 
 	def test_stream_blob_bigger_than_buffer
 		output = "#{TMP_DIR}/bigger_than_buffer"
-    input = "#{FIX_DIR}/medium.blob"
+    input = "#{FIX_DIR}/first"
 
 		@stmt.file = File.new(output, 'w')
-		@stmt.execute 'medium'
+		@stmt.execute 'first'
 		@stmt.stream(File.size(input) / 100)
 		@stmt.file.close
 
@@ -129,10 +129,10 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
 
 	def test_stream_blob_almoust_equal_to_buffer_but_less
 		output = "#{TMP_DIR}/less_than_buffer"
-    input = "#{FIX_DIR}/medium.blob"
+    input = "#{FIX_DIR}/first"
 
 		@stmt.file = File.new(output, 'w')
-		@stmt.execute 'medium'
+		@stmt.execute 'first'
 		@stmt.stream(File.size(input) - 1)
 		@stmt.file.close
 
@@ -141,10 +141,10 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
 	
 	def test_stream_blob_almoust_equal_to_buffer_but_bigger
 		output = "#{TMP_DIR}/bigger_than_buffer"
-    input = "#{FIX_DIR}/medium.blob"
+    input = "#{FIX_DIR}/first"
 
 		@stmt.file = File.new(output, 'w')
-		@stmt.execute 'medium'
+		@stmt.execute 'first'
 		@stmt.stream(File.size(input) + 1)
 		@stmt.file.close
 
@@ -152,19 +152,37 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
 	end
 
 	def test_stream_same_blob_more_than_once
-		output = "#{TMP_DIR}/bigger_than_buffer"
-    input = "#{FIX_DIR}/medium.blob"
+		output = "#{TMP_DIR}/many_times_the_same"
+    input = "#{FIX_DIR}/first"
 
     10.times do
       @stmt.file = File.new(output, 'w')
-      @stmt.execute 'medium'
-      @stmt.stream(File.size(input) + 1)
+      @stmt.execute 'first'
+      @stmt.stream 65000
       @stmt.file.close
       assert_equal(File.read(input), File.read(output))
     end
 	end
 
-	def test_stream_distinct_blobs_serial
+	def test_stream_different_blobs_serial
+		output1 = "#{TMP_DIR}/many_times_the_different1"
+    input1 = "#{FIX_DIR}/first"
+		output2 = "#{TMP_DIR}/many_times_the_different2"
+    input2 = "#{FIX_DIR}/second"
+
+		10.times do
+      @stmt.file = File.new(output1, 'w')
+      @stmt.execute 'first'
+      @stmt.stream 65000
+      @stmt.file.close
+      assert_equal(File.read(input1), File.read(output1))
+
+      @stmt.file = File.new(output2, 'w')
+      @stmt.execute 'second'
+      @stmt.stream 65000
+      @stmt.file.close
+      assert_equal(File.read(input2), File.read(output2))
+		end
 	end
 
   def test_stream_really_big_blobs
@@ -172,7 +190,14 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
   end
 
   def test_stream_really_tiny_blobs
-    assert true
+		output = "#{TMP_DIR}/very_small"
+    input = "#{FIX_DIR}/small"
+
+		@stmt.file = File.new(output, 'w')
+		@stmt.execute 'small'
+		@stmt.stream 65000
+		@stmt.file.close
+		assert_equal(File.read(input), File.read(output))
   end
 
 	def test_logging

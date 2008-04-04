@@ -13,13 +13,13 @@ module Fixtures
 		def self.up
 			create_table :blobs do |t|
 				t.column :name, :string
-				t.column :data, :blob
+				t.column :data, :longblob
 			end
 
-			%w|small medium big|.each do |name|
+			%w|first second small|.each do |name|
 				Blob.create(
 					:name => name,
-					:data => File::read("#{Fixtures::MY_DIR}/fixtures/#{name}.blob")
+					:data => File::read("#{Fixtures::MY_DIR}/fixtures/#{name}")
 				)
 			end
 			Blob.create(
