@@ -5,6 +5,8 @@ MY_DIR = File.expand_path(File.dirname(__FILE__))
 
 task :default => :test
 
+task :cruise => [:test, :gem]
+
 task :test => :compile
 Rake::TestTask.new do |t|
 	t.test_files = FileList["#{MY_DIR}/test/test.rb"]
