@@ -83,9 +83,6 @@ static VALUE stmt_fetch_and_write(VALUE obj, VALUE rb_buffer_length)
             if (store_buffer(s, i * s->result.bind[0].buffer_length, obj)) {
                 return Qnil;
             }
-            rb_funcall(obj, rb_intern("log_progress"), 1,
-                    rb_float_new(((double)i + 1.0) * s->result.bind[0].buffer_length *
-                    100.0 / blob_length));
         }
         int old_bufflen = s->result.bind[0].buffer_length;
         int new_bufflen = blob_length % s->result.bind[0].buffer_length;
@@ -96,7 +93,6 @@ static VALUE stmt_fetch_and_write(VALUE obj, VALUE rb_buffer_length)
             }
         }
     }
-    rb_funcall(obj, rb_intern("log_progress"), 1, INT2FIX(100));
     return Qnil;
 }
 

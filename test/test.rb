@@ -19,9 +19,9 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
 		mysql_args = YAML::load_file("#{MY_DIR}/database.yml")
   	@mysql = Mysql.new(
   		'localhost',
-  		mysql_args["username"], 
-  		mysql_args["password"], 
-  		mysql_args["database"] 
+  		mysql_args['username'], 
+  		mysql_args['password'], 
+  		mysql_args['database'] 
   	)
   	@stmt = @mysql.prepare 'SELECT data FROM blobs WHERE name = ?'
 
@@ -38,17 +38,12 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
 				@counter = @counter + 1
 				file << data
 			end
-
-			def log_progress(pct)
-				pct
-			end
 		end
 	end
 
 	def teardown
 		@mysql.close if @mysql
 		@stmt.close if @stmt
-
 	 	FileUtils.rm_rf TMP_DIR
 	end
 
@@ -60,7 +55,6 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
 
   def test_buffer_is_less_than_null
 		output = output_of 'first'
-
   	@stmt.file = File.new(output, 'w')
   	@stmt.execute 'first'
 
@@ -90,35 +84,30 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
 
 	def test_stream_blob_less_than_buffer
 		input, output = io_of 'first'
-
 		stream('first', output, File.size(input) * 100)
 		assert_equal(File.read(input), File.read(output))
 	end
 
 	def test_stream_blob_bigger_than_buffer
 		input, output = io_of 'first'
-
 		stream('first', output, File.size(input) / 100)
 		assert_equal(File.read(input), File.read(output))
 	end
 
 	def test_stream_blob_almoust_equal_to_buffer_but_less
 		input, output = io_of 'first'
-
 		stream('first', output, File.size(input) - 1)
 		assert_equal(File.read(input), File.read(output))
 	end
 	
 	def test_stream_blob_almoust_equal_to_buffer_but_bigger
 		input, output = io_of 'first'
-
 		stream('first', output, File.size(input) + 1)
 		assert_equal(File.read(input), File.read(output))
 	end
 
 	def test_stream_same_blob_more_than_once
 		input, output = io_of 'first'
-
     10.times do
 			stream 'first', output
       assert_equal(File.read(input), File.read(output))
@@ -128,19 +117,15 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
 	def test_stream_different_blobs_serial
 		input1, output1 = io_of 'first'
 		input2, output2 = io_of 'second'
-
 		10.times do
 			stream 'first', output1
       assert_equal(File.read(input1), File.read(output1))
-
 			stream 'second', output2
       assert_equal(File.read(input2), File.read(output2))
 		end
 	end
 
   def test_stream_really_big_blobs
-####stream('big', io_of('big'))
-    assert true
   end
 
   def test_stream_really_tiny_blobs
@@ -149,11 +134,7 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
 		assert_equal(File.read(input), File.read(output))
   end
 
-	def test_logging
-		assert true
-	end
-	
-	# Helpera
+	# Helpers
 	def stream(id, output, buffer_size = 65000)
 		@stmt.file = File.new(output, 'w')
 		@stmt.execute id
