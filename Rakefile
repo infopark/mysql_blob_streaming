@@ -6,7 +6,7 @@ GEM_FILE = "mysql_blob_streaming-#{File.read('./version').chop}.gem"
 
 task :default => :test
 
-task :cruise => [:test, :gem]
+task :cruise => [:test, "gem:linux"]
 
 task :test => :compile
 Rake::TestTask.new do |t|
@@ -31,19 +31,26 @@ task :clean do
 	end
 end
 
-desc 'Create GEM-Package'
-task :gem => [:test, :clean, :compile] do
-  within_root_dir do
-		FileUtils.rm_f 'mysql_blob_streaming-*.gem'
-		sh 'gem build gemspec.rb'
-		exit 1 if FileList[GEM_FILE].empty?
-	end
-end
 
-desc 'Install GEM'
-task :install => :gem do
-  within_root_dir do
-		sh "sudo gem install #{GEM_FILE}"
+%w|linux darwin|.each do |ostype|
+	namespace :gem do
+		desc "Create #{ostype} GEM-Package"
+		task ostype.to_sym => [:test, :clean, :compile] do
+			within_root_dir do
+				FileUtils.rm_f 'mysql_blob_streaming-*.gem'
+				sh 'gem build gemspec.rb'
+				exit 1 if FileList[GEM_FILE].empty?
+			end
+		end
+	end
+
+	namespace :install do
+		desc "Install GEM on a #{ostype}"
+		task ostype.to_sym => "gem:#{ostype}" do
+			within_root_dir do
+				sh "sudo gem install #{GEM_FILE}"
+			end
+		end
 	end
 end
 
