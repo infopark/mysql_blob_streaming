@@ -2,7 +2,7 @@
 --
 -- Host: localhost    Database: mysql_blob_streaming
 -- ------------------------------------------------------
--- Server version	5.0.44
+-- Server version	5.0.51a-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -20,12 +20,15 @@
 --
 
 DROP TABLE IF EXISTS `blobs`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE `blobs` (
   `id` int(11) NOT NULL auto_increment,
   `name` varchar(255) default NULL,
   `data` longblob,
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Dumping data for table `blobs`
@@ -46,4 +49,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2008-04-09 12:25:52
+-- Dump completed on 2008-04-09 12:27:30
