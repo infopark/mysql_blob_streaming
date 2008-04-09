@@ -2,6 +2,7 @@ require 'rake/testtask'
 require 'rake/gempackagetask'
 
 MY_DIR = File.expand_path(File.dirname(__FILE__))
+GEM_FILE = "mysql_blob_streaming-#{File.read('./version').chop}.gem"
 
 task :default => :test
 
@@ -15,7 +16,7 @@ end
 
 desc 'Compile C source files'
 task :compile => :clean do
-  in_root_dir do
+  within_root_dir do
 		sh 'ruby extconf.rb; make'
 		exit 1 unless File.exist? 'mysql_blob_streaming.so'
 	end
@@ -23,7 +24,7 @@ end
 
 desc 'Remove files produced by compiling' 
 task :clean do
-  in_root_dir do
+  within_root_dir do
 		%w|Makefile mysql_blob_streaming.so mysql_blob_streaming.o mkmf.log|.each do |file|
 			FileUtils.rm_f file
 		end
@@ -32,18 +33,18 @@ end
 
 desc 'Create GEM-Package'
 task :gem => [:test, :clean, :compile] do
-  in_root_dir do
+  within_root_dir do
+		FileUtils.rm_f 'mysql_blob_streaming-*.gem'
 		sh 'gem build gemspec.rb'
-		exit 1 if FileList['mysql_blob_streaming-*.gem'].empty?
+		exit 1 if FileList[GEM_FILE].empty?
 	end
 end
 
 desc 'Install GEM'
 task :install => :gem do
-  in_root_dir do
-		%w|uninstall install|.each do |action|
-			sh "sudo gem #{action} mysql_blob_streaming"
-		end
+  within_root_dir do
+		sh 'sudo gem uninstall mysql_blob_streaming'
+		sh "sudo gem install #{GEM_FILE}"
 	end
 end
 
@@ -53,6 +54,6 @@ task :update_dump do
 	Rake::Task[:test].invoke
 end
 
-def in_root_dir
+def within_root_dir
 	Dir.chdir(MY_DIR){yield}
 end

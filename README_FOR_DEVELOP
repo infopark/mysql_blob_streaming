@@ -1,5 +1,5 @@
 --- ACHTUNG!
-Bei einer Änderung der Datei ./mysql_blob_streaming.c bitte die Versionsnummer in der Datei ./gemspec.rb hochzählen, damit das auch andere Projekte mitkriegen (sprich: Damit deren Tests nicht mehr durchlaufen, was einen GEM-update auf den entsprechenden Rechnern erzwingen wird).
+Bei einer Änderung der Datei ./mysql_blob_streaming.c bitte die Versionsnummer in der Datei ./version die Versionsnummer hochzählen, damit dies auch andere Projekte mitkriegen (sprich: Damit deren Tests nicht mehr durchlaufen, was einen GEM-update auf den entsprechenden Rechnern erzwingen wird).
 Wie stark die Versionsnummer inkrementiert werden soll, hängt davon ab, wie umfangreich die Änderung ist. Die Entscheidung ist nach Möglichkeit mit dem Produkt-Management abzusprechen.
 Es wird evtl. ein GEM-Update auf SEHR VIELEN Rechnern nötig sein. Der obige Schritt sollte also sehr gut überlegt sein und nach Möglichkeit erst dann stattfinden, wenn in der nahen Zukunft zunächst keine weiteren Code-Modifikationen zu erwarten sind.
 
