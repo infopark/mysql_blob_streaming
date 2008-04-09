@@ -2,6 +2,12 @@
 
 It provides the module MysqlBlobStreaming, which gives the adaptor the ability of streaming blobs right out of the MySQL database.
 
+This GEM is required when using the Infopark Rails Connector (RC) in conjunction with MySQL. It has to be installed on all servers on which the RC is running.
+
+This GEM may only be used in conjunction with a valid license of the Infopark Rails Connector (RC).
+
+(c) 2008 Infopark AG. All rights reserved.
+
 == Dependencies
 
   * Ruby-headers
