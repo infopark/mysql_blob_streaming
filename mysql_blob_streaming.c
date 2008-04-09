@@ -47,14 +47,12 @@ static VALUE stmt_fetch_and_write(VALUE obj, VALUE buffer_length);
 
 
 static VALUE rb_mMysqlBlobStreaming;
-VALUE mysqlClass;
 
 
 void Init_mysql_blob_streaming()
 {
     rb_mMysqlBlobStreaming = rb_define_module("MysqlBlobStreaming");
     rb_define_method(rb_mMysqlBlobStreaming, "stream", stmt_fetch_and_write, 1);
-    mysqlClass = rb_define_class("Mysql", rb_cObject);
 }
 
 
