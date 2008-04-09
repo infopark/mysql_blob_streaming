@@ -43,7 +43,6 @@ end
 desc 'Install GEM'
 task :install => :gem do
   within_root_dir do
-		sh 'sudo gem uninstall mysql_blob_streaming'
 		sh "sudo gem install #{GEM_FILE}"
 	end
 end
