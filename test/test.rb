@@ -126,6 +126,7 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
 	end
 
   def test_stream_really_big_blobs
+    puts "\n\33[33mPending: Test RAM-usage while streaming some really big blob.\e[0m\n"
   end
 
   def test_stream_really_tiny_blobs
