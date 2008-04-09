@@ -1,7 +1,6 @@
-= A blob streaming extension for native Ruby-MySQL adaptor
+= A blob streaming extension for the native Ruby-MySQL adaptor.
 
-MysqlBlobStreaming is a Ruby module written in C, which provides the ability of streaming blobs out of the MySQL database.
-It extends the native Ruby-MySQL adapter and uses the MySQL's C-API to provide additional functionality.
+It provides the module MysqlBlobStreaming, which gives the adaptor the ability of streaming blobs right out of the MySQL database.
 
 == Dependencies
 
@@ -19,33 +18,32 @@ Run it with root privileges if needed.
 
 == Usage
 
-Create a Statement object:
+First you need a statement object.
 
   require 'mysql'
   mysql = Mysql.new('localhost', 'mysqluser', 'mysqlpassword', 'testdatabase')
   stmt = mysql.prepare("SELECT data FROM blobs WHERE id = ?")
 
-Extend it with the module MysqlBlobStreaming to provide the additional functionality:
+Which SQL-Statement is usefull depends on your own use case. 
+You can either use an already existing statement object.
 
+Second extend that statement with the module MysqlBlobStreaming to add the additional functionality.
+To make Ruby be able to find that module you have to require RubyGems first (if you haven't done it already).
+  
+  # require 'rubygems'
   require 'mysql_blob_streaming'
   stmt.extend(MysqlBlobStreaming)
 
-Implement the helper methods, which  will be called to handle the fetched partial data and to log the progress status:
+Now implement the callback method, which  will be used everytime a peace of data is fetched:
 
-  class << stmt
-    def handle_data(data)
-      # 'data' is the fetched data from MySQL databases
-    end
-
-    def log_progress(pct)
-      # 'pct' is the progress status in procent
-    end
+  def stmt.handle_data(data)
+    # 'data' is the fetched data.
+    # You would probably want to append it to a file.
   end
 
-Now you are able to stream the blob. You can do it with the method <code>stream(size)</code>. 
-The <code>size</code> parameter specifies the buffer size for each fetch.
-
-Execute the statement and stream the blob with buffer size of 1 megabyte:
+Now you are able to stream the blob. You start it with the method <code>stream(size)</code>. 
+The <code>size</code> parameter specifies the buffer size in Bytes.
+Following will execute the SQL-statement and stream the blob (buffer size is 1 megabyte):
   
   stmt.execute(1234)
   stmt.stream(1048576)

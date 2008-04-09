@@ -17,7 +17,6 @@ Update der Fixtures:
   * Zuerst werden die Fixtures als Binärdateien im Verzeichnis ./test/fixtures abgelegt.
   * Anschliessend wird die Migration im Skript ./test/fixtures.rb angepasst.
   * Man muss nun einen neuen Dump erzeugen:
-      $> rake update_dump
-    Die Datei ./test/fixtures.sql wird damit neuangelegt.
-Alle Fixtures werden als der neue Dump direkt in die Datenbank reingefahren.
-Einchecken bitte incl. SQL-Dump!
+      $ rake update_dump
+    Dami wird die Datei ./test/fixtures.sql neu angelegt.
+Alle Fixtures werden als der neue Dump direkt in die Datenbank reingefahren. Deshalb: Einchecken bitte incl. SQL-Dump!
