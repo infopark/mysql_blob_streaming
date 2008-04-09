@@ -19,6 +19,9 @@ task :compile do
   within_root_dir do
 		sh 'touch mysql_blob_streaming.c; ruby extconf.rb; make'
 		exit 1 if FileList['mysql_blob_streaming.{so,bundle}'].empty?
+		%w|Makefile mkmf.log mysql_blob_streaming.o|.each do |file|
+			FileUtils.rm file
+		end
 	end
 end
 
