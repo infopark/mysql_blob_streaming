@@ -18,14 +18,14 @@ desc 'Compile C source files'
 task :compile => :clean do
   within_root_dir do
 		sh 'ruby extconf.rb; make'
-		exit 1 unless File.exist? 'mysql_blob_streaming.so'
+		exit 1 if FileList['mysql_blob_streaming.{so,bundle}'].empty?
 	end
 end
 
 desc 'Remove files produced by compiling' 
 task :clean do
   within_root_dir do
-		%w|Makefile mysql_blob_streaming.so mysql_blob_streaming.o mkmf.log|.each do |file|
+		%w|Makefile mysql_blob_streaming.so mysql_blob_streaming.bundle mysql_blob_streaming.o mkmf.log|.each do |file|
 			FileUtils.rm_f file
 		end
 	end
