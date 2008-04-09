@@ -22,10 +22,7 @@ module Fixtures
 					:data => File::read("#{Fixtures::MY_DIR}/fixtures/#{name}")
 				)
 			end
-			Blob.create(
-				:name => 'empty',
-				:data => nil
-			)
+			Blob.create(:name => 'empty', :data => nil)
 		end
 
 		def self.down
@@ -37,7 +34,7 @@ module Fixtures
 	@@dump_file = "#{MY_DIR}/fixtures.sql"
 
 	def self.update
-		puts "\n\t\33[33mWARNING: this will defy your RAM, so be pationed!\e[0m\n\n"
+		puts "\n\t\33[33mWARNING: this could defy your RAM, so be pationed!\e[0m\n\n"
 
 		FixtureMigration.migrate :down
 		FixtureMigration.migrate :up
@@ -48,8 +45,6 @@ module Fixtures
 	def self.insert
 		if File.exist? @@dump_file
 			%x|mysql #{@@mysql_args} < #{@@dump_file}|
-		else
-			update
-		end
+		else; update; end
 	end
 end

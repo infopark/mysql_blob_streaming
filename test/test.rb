@@ -58,9 +58,7 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
   	@stmt.file = File.new(output, 'w')
   	@stmt.execute 'first'
 
-  	assert_raise RuntimeError do
-  		@stmt.stream -123
-  	end
+  	assert_raise(RuntimeError){@stmt.stream -123}
   end
 
   def test_blob_data_is_null
@@ -76,9 +74,7 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
 		stream 'first', output, 1
 		assert_equal(input_size, @stmt.counter)
 
-		stream('first', output, input_size) do |stmt|
-			stmt.reset
-		end
+		stream('first', output, input_size){|stmt| stmt.reset}
 		assert_equal(1, @stmt.counter)
 	end
 
@@ -114,7 +110,7 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
     end
 	end
 
-	def test_stream_different_blobs_serial
+	def test_stream_different_blobs_serially
 		input1, output1 = io_of 'first'
 		input2, output2 = io_of 'second'
 		10.times do
@@ -126,6 +122,7 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
 	end
 
   def test_stream_really_big_blobs
+    # Fixture functionality is not yet implemented.
     puts "\n\33[33mPending: Test RAM-usage while streaming some really big blob.\e[0m\n"
   end
 
