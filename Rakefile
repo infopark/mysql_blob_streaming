@@ -15,31 +15,21 @@ Rake::TestTask.new do |t|
 end
 
 desc 'Compile C source files'
-task :compile => :clean do
+task :compile do
   within_root_dir do
-		sh 'ruby extconf.rb; make'
+		sh 'touch mysql_blob_streaming.c; ruby extconf.rb; make'
 		exit 1 if FileList['mysql_blob_streaming.{so,bundle}'].empty?
 	end
 end
 
-desc 'Remove files produced by compiling' 
-task :clean do
-  within_root_dir do
-		%w|Makefile mysql_blob_streaming.so mysql_blob_streaming.bundle mysql_blob_streaming.o mkmf.log|.each do |file|
-			FileUtils.rm_f file
-		end
-	end
-end
-
-
 %w|linux darwin|.each do |ostype|
 	namespace :gem do
 		desc "Create #{ostype} GEM-Package"
-		task ostype.to_sym => [:test, :clean, :compile] do
+		task ostype.to_sym => [:test, :compile] do
 			within_root_dir do
-				FileUtils.rm_f 'mysql_blob_streaming-*.gem'
 				sh "ostype='#{ostype}' gem build gemspec.rb"
 				exit 1 if FileList[GEM_FILE].empty?
+				FileUtils.mv GEM_FILE, "./#{ostype}"
 			end
 		end
 	end
@@ -48,7 +38,7 @@ end
 		desc "Install GEM on a #{ostype}"
 		task ostype.to_sym => "gem:#{ostype}" do
 			within_root_dir do
-				sh "sudo gem install #{GEM_FILE}"
+				sh "sudo gem install ./#{ostype}/#{GEM_FILE}"
 			end
 		end
 	end
