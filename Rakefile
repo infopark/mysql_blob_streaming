@@ -38,7 +38,7 @@ end
 		task ostype.to_sym => [:test, :clean, :compile] do
 			within_root_dir do
 				FileUtils.rm_f 'mysql_blob_streaming-*.gem'
-				sh 'gem build gemspec.rb'
+				sh "ostype='#{ostype}' gem build gemspec.rb"
 				exit 1 if FileList[GEM_FILE].empty?
 			end
 		end
