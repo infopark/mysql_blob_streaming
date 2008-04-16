@@ -1,5 +1,5 @@
 SPEC = Gem::Specification.new do |spec|
-	puts 
+  puts 
   spec.name = 'mysql_blob_streaming'
   spec.version = File.read('./version').chop
   spec.summary = 'A blob streaming extension for the native Ruby-MySQL adapter'
@@ -21,11 +21,11 @@ SPEC = Gem::Specification.new do |spec|
   spec.add_dependency('mysql', '>=2.7')
   spec.required_ruby_version = '>=1.8.6'
 
-	os_extension_mapping = {
-		'linux' => 'so', 
-		'darwin' => 'bundle'
-	}
-	spec.files = ["mysql_blob_streaming.#{os_extension_mapping[ENV['ostype']]}", 'README']
+  os_extension_mapping = {
+    'linux' => 'so', 
+    'darwin' => 'bundle'
+  }
+  spec.files = ["mysql_blob_streaming.#{os_extension_mapping[ENV['ostype']]}", 'README']
 
   spec.require_path = '.'
 
