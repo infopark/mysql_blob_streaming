@@ -8,12 +8,11 @@ SPEC = Gem::Specification.new do |spec|
   spec.email = 'info@infopark.de'
   spec.requirements << 'Infopark Rails Connector (RC)'
   spec.description = <<-EOF
-    This GEM is required when using the Infopark Rails Connector (RC) in
-    conjunction with MySQL. It has to be installed on all servers on
-    which the RC is running.
+    This GEM is required by the Infopark Rails Connector (RC) when using MySQL.
+    It has to be installed on all servers on which the RC is running.
 
-    This GEM may only be used in conjunction with a valid license of the
-    Infopark Rails Connector (RC).
+    This GEM may only be used with a valid license of the Infopark Rails
+    Connector (RC).
 
     (c) 2008 Infopark AG. All rights reserved.
   EOF
@@ -22,7 +21,8 @@ SPEC = Gem::Specification.new do |spec|
   spec.required_ruby_version = '>=1.8.6'
 
   os_extension_mapping = {
-    'linux' => 'so', 
+    'linux32' => 'so',
+    'linux64' => 'so',
     'darwin' => 'bundle'
   }
   spec.files = ["mysql_blob_streaming.#{os_extension_mapping[ENV['ostype']]}", 'README']

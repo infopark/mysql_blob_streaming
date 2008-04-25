@@ -26,11 +26,12 @@ task :clean do
   rm_f FileList["*.so", "*.bundle", "*.dll", "*.o", "Makefile", "mkmf.log"], :verbose => true
 end
 
-%w|linux darwin|.each do |ostype|
+%w|linux32 linux64 darwin32|.each do |ostype|
   namespace :gem do
     desc "Create #{ostype} GEM-Package"
     task ostype => :test do
       sh "ostype='#{ostype}' gem build gemspec.rb"
+      mkdir_p ostype
       mv GEM_FILE, ostype
     end
   end
