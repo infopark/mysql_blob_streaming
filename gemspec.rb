@@ -23,9 +23,11 @@ SPEC = Gem::Specification.new do |spec|
   os_extension_mapping = {
     'linux32' => 'so',
     'linux64' => 'so',
-    'darwin' => 'bundle'
+    'darwin32' => 'bundle'
   }
-  spec.files = ["mysql_blob_streaming.#{os_extension_mapping[ENV['ostype']]}", 'README']
+  extension = os_extension_mapping[ENV['ostype']]
+  raise "Missing os_extension_mapping" unless extension
+  spec.files = ["mysql_blob_streaming.#{extension}", 'README']
 
   spec.require_path = '.'
 

@@ -14,7 +14,8 @@ Rake::TestTask.new do |t|
 end
 
 file 'Makefile' => ['extconf.rb', 'Rakefile'] do
-  ruby "extconf.rb"  
+  ruby "extconf.rb"
+  sh 'perl -i -pe "s/-ppc//g" Makefile'
 end
 
 desc 'Compile C source files'

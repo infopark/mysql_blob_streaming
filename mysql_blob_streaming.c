@@ -1,17 +1,8 @@
 #include <ruby.h>
 #include <stdlib.h>
 
-#ifdef HAVE_MYSQL_H
-  #include <mysql.h>
-#else
-  #include <mysql/mysql.h>
-#endif
-#ifdef HAVE_ERRMSG_H
-  #include <errmsg.h>
-#else
-  #include <mysql/errmsg.h>
-#endif
-
+#include <mysql.h>
+#include <errmsg.h>
 
 struct mysql_stmt {
     MYSQL_STMT *stmt;
