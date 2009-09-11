@@ -15,7 +15,12 @@ end
 
 file 'Makefile' => ['extconf.rb', 'Rakefile'] do
   ruby "extconf.rb"
-  sh 'perl -i -pe "s/-ppc//g" Makefile'
+  if RUBY_PLATFORM =~ /darwin/i
+    mf = File.read("Makefile")
+    open("Makefile", "w") do |f|
+      f << mf.gsub(/-ppc/, '').gsub(/-arch i386/, '')
+    end
+  end
 end
 
 desc 'Compile C source files'
@@ -27,7 +32,7 @@ task :clean do
   rm_f FileList["*.so", "*.bundle", "*.dll", "*.o", "Makefile", "mkmf.log"], :verbose => true
 end
 
-%w|linux32 linux64 darwin32|.each do |ostype|
+%w|linux32 linux64 darwin64|.each do |ostype|
   namespace :gem do
     desc "Create #{ostype} GEM-Package"
     task ostype => :test do

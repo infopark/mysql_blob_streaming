@@ -1,5 +1,4 @@
 SPEC = Gem::Specification.new do |spec|
-  puts 
   spec.name = 'mysql_blob_streaming'
   spec.version = File.read('./version').chop
   spec.summary = 'A blob streaming extension for the native Ruby-MySQL adapter'
@@ -23,7 +22,7 @@ SPEC = Gem::Specification.new do |spec|
   os_extension_mapping = {
     'linux32' => 'so',
     'linux64' => 'so',
-    'darwin32' => 'bundle'
+    'darwin64' => 'bundle'
   }
   extension = os_extension_mapping[ENV['ostype']]
   raise "Missing os_extension_mapping" unless extension
