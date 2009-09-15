@@ -5,4 +5,3 @@ username: mbs
 password: mbs
 encoding: utf8
 allow_concurrency: false
-...

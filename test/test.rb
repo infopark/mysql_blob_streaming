@@ -19,9 +19,9 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
     mysql_args = YAML::load_file("#{MY_DIR}/database.yml")
     @mysql = Mysql.new(
       'localhost',
-      mysql_args['username'], 
-      mysql_args['password'], 
-      mysql_args['database'] 
+      mysql_args['username'],
+      mysql_args['password'],
+      mysql_args['database']
     )
     @stmt = @mysql.prepare 'SELECT data FROM blobs WHERE name = ?'
 
@@ -95,7 +95,7 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
     stream('first', output, File.size(input) - 1)
     assert_equal(File.read(input), File.read(output))
   end
-  
+
   def test_stream_blob_almoust_equal_to_buffer_but_bigger
     input, output = io_of 'first'
     stream('first', output, File.size(input) + 1)

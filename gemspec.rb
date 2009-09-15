@@ -19,14 +19,7 @@ SPEC = Gem::Specification.new do |spec|
   spec.add_dependency('mysql', '>=2.7')
   spec.required_ruby_version = '>=1.8.6'
 
-  os_extension_mapping = {
-    'linux32' => 'so',
-    'linux64' => 'so',
-    'darwin64' => 'bundle'
-  }
-  extension = os_extension_mapping[ENV['ostype']]
-  raise "Missing os_extension_mapping" unless extension
-  spec.files = ["mysql_blob_streaming.#{extension}", 'README']
+  spec.files = ["mysql_blob_streaming.#{ENV['SHARED_OBJECT_FILE_EXTENSION']}", 'README']
 
   spec.require_path = '.'
 
