@@ -2,12 +2,16 @@ MY_DIR = File.dirname(__FILE__)
 FIX_DIR = "#{MY_DIR}/fixtures"
 TMP_DIR = "#{MY_DIR}/tmp"
 
+# make sure our lib is first in the load path.
+# otherwise we might test against a gem installed in the system
+$LOAD_PATH.unshift("#{MY_DIR}/lib")
+
 require 'rubygems'
 require 'test/unit'
 require 'fileutils'
 require 'mysql'
 require "#{MY_DIR}/fixtures"
-require "#{MY_DIR}/../mysql_blob_streaming"
+require "mysql_blob_streaming"
 
 Fixtures.insert
 
