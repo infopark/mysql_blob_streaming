@@ -3,7 +3,6 @@ require 'rake/testtask'
 require 'rake/gempackagetask'
 require 'yaml'
 
-GEM_FILE = "mysql_blob_streaming-#{File.read('./version').chomp}.gem"
 CLEAN.include("*.so", "*.bundle", "*.o", "Makefile", "mkmf.log")
 
 def platform
@@ -25,31 +24,8 @@ def os_type
   "#{platform}#{bits}"
 end
 
-def shared_object_file_extension
-  case platform
-  when 'linux'
-    'so'
-  when 'darwin'
-    'bundle'
-  end
-end
-
 task :default => :test
 task :cruise => :test
-
-desc "Create GEM for #{os_type}"
-task :gem => [:clean, :compile, :test] do
-  sh "env SHARED_OBJECT_FILE_EXTENSION=#{shared_object_file_extension} gem build gemspec.rb"
-  mkdir_p os_type
-  mv GEM_FILE, os_type
-end
-
-namespace :gem do
-  desc "Install GEM for #{os_type}"
-  task :install => :gem do
-    sh "sudo gem install #{os_type}/#{GEM_FILE}"
-  end
-end
 
 task :test => [:compile, :prepare_test_db]
 Rake::TestTask.new do |t|
