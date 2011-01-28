@@ -1,6 +1,6 @@
 SPEC = Gem::Specification.new do |spec|
   spec.name = 'mysql_blob_streaming'
-  spec.version = File.read('./version').chop
+  spec.version = "1.1.0"
   spec.summary = 'A blob streaming extension for the native Ruby-MySQL adapter'
   spec.author = 'Infopark AG'
   spec.homepage = 'http://www.infopark.de/'
@@ -19,9 +19,7 @@ SPEC = Gem::Specification.new do |spec|
   spec.add_dependency('mysql', '>=2.7')
   spec.required_ruby_version = '>=1.8.6'
 
-  spec.files = ["mysql_blob_streaming.#{ENV['SHARED_OBJECT_FILE_EXTENSION']}", 'README']
-
-  spec.require_path = '.'
+  spec.files = Dir["{lib}/**/*", "README"]
 
   spec.has_rdoc = true
   spec.extra_rdoc_files = ['README']
