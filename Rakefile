@@ -27,7 +27,7 @@ end
 task :default => :test
 task :cruise => :test
 
-task :test => [:compile, :prepare_test_db]
+task :test => [:build, :prepare_test_db]
 Rake::TestTask.new do |t|
   t.test_files = FileList["test/test.rb"]
   t.verbose = true
@@ -40,6 +40,13 @@ task :prepare_test_db do
   end
   sh "mysqladmin", "-uroot", "create", database_config['database']
   sh "mysql", "-uroot", "-e", "grant all on #{database_config['database']}.* to '#{database_config['username']}'@'localhost' identified by '#{database_config['password']}'"
+end
+
+task :build => [:clean, :compile] do
+  Dir["*.so", "*.dll", "*.bundle"].each do |file|
+    new_name = file.pathmap("%{$,*}n%x") { "64" if os_type == "linux64" }
+    mv file, "lib/#{new_name}", :verbose => true
+  end
 end
 
 desc 'Compile C source files'

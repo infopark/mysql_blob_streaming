@@ -14,4 +14,4 @@ find_header('errmsg.h', *additional_mysql_include_dirs)
 # find_library('mysqlclient', mysql_stmt_fetch_column, *additional_mysql_lib_dirs)
 find_library('mysqlclient', nil, *additional_mysql_lib_dirs)
 
-create_makefile('mysql_blob_streaming')
+create_makefile('mysql_blob_streaming_stream')
