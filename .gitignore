@@ -1,0 +1,4 @@
+Makefile
+mkmf.log
+mysql_blob_streaming-*.gem
+mysql_blob_streaming_stream.o
