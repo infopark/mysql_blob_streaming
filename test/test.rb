@@ -1,10 +1,11 @@
 MY_DIR = File.dirname(__FILE__)
 FIX_DIR = "#{MY_DIR}/fixtures"
 TMP_DIR = "#{MY_DIR}/tmp"
+LIB_DIR = "#{MY_DIR}/../lib"
 
 # make sure our lib is first in the load path.
 # otherwise we might test against a gem installed in the system
-$LOAD_PATH.unshift("#{MY_DIR}/lib")
+$LOAD_PATH.unshift(LIB_DIR)
 
 require 'rubygems'
 require 'test/unit'
@@ -134,6 +135,20 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
     input, output = io_of 'small'
     stream 'small', output
     assert_equal(File.read(input), File.read(output))
+  end
+
+  def test_should_not_link_against_libruby_see_bug_12701
+    running_on_mac = RUBY_PLATFORM.include?("darwin")
+    dependency_checker_command = running_on_mac ? "otool -L" : "ldd"
+    libraries = "#{LIB_DIR}/mysql_blob_streaming_stream*"
+    dependencies = %x{#{dependency_checker_command} #{libraries} 2> /dev/null}
+
+    assert !Dir.glob(libraries).empty?
+
+    # sanity check to see if we got any sensible output from our dependency checker at all
+    assert dependencies.include?(running_on_mac ? "libmysql" : "libc.so")
+
+    assert !dependencies.include?("libruby")
   end
 
   # Helpers
