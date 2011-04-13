@@ -42,6 +42,7 @@ task :prepare_test_db do
   sh "mysql", "-uroot", "-e", "grant all on #{database_config['database']}.* to '#{database_config['username']}'@'localhost' identified by '#{database_config['password']}'"
 end
 
+desc "build the shared library"
 task :build => [:clean, :compile] do
   Dir["*.so", "*.dll", "*.bundle"].each do |file|
     new_name = file.pathmap("%{$,*}n%x") { "64" if os_type == "linux64" }
