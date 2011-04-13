@@ -8,13 +8,19 @@ It has to be installed on all servers on which the RC is running.
 
 This GEM may only be used with a valid license of the Infopark Rails Connector.
 
-(c) 2008 Infopark AG. All rights reserved.
+(c) 2008-2011 Infopark AG. All rights reserved.
 
 == Dependencies
 
   * Ruby-headers
   * MySQL-headers
   * Native Ruby-MySQL adaptor (http://www.tmtm.org/en/mysql/ruby)
+
+== Building
+
+  rake build
+
+  gem build mysql_blob_streaming.gemspec
 
 == Installation
 
