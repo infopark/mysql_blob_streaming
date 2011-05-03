@@ -19,9 +19,9 @@ SPEC = Gem::Specification.new do |spec|
   spec.add_dependency('mysql', '>=2.7')
   spec.required_ruby_version = '>=1.8.6'
 
-  spec.files = Dir["{lib}/**/*", "README"]
+  spec.files = Dir["{lib}/**/*", "README*"]
 
   spec.has_rdoc = true
-  spec.extra_rdoc_files = ['README']
-  spec.rdoc_options = ['--main', 'README']
+  spec.extra_rdoc_files = Dir['README*']
+  spec.rdoc_options = ['--main', Dir['README*'].first]
 end
