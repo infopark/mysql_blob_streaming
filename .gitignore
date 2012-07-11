@@ -1,4 +1,8 @@
 Makefile
 mkmf.log
 mysql_blob_streaming-*.gem
-mysql_blob_streaming_stream.o
+/ext/mysql_blob_streaming/conftest.*
+/ext/mysql_blob_streaming/mysql_blob_streaming.bundle
+/ext/mysql_blob_streaming/mysql_blob_streaming.so
+/ext/mysql_blob_streaming/mysql_blob_streaming.o
+/lib/mysql_blob_streaming/

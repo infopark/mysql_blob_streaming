@@ -1,37 +1,33 @@
-require 'rake/clean'
 require 'rake/testtask'
-require 'rake/gempackagetask'
+require 'rake/clean'
 require 'yaml'
 
-CLEAN.include("*.so", "*.bundle", "*.o", "Makefile", "mkmf.log")
+NAME = "mysql_blob_streaming"
 
-def platform
-  case RUBY_PLATFORM
-  when /linux/
-    "linux"
-  when /darwin/
-    "darwin"
-  else
-    raise "unsupported platform: #{RUBY_PLATFORM}"
+file "lib/#{NAME}/#{NAME}.so" => Dir.glob("ext/#{NAME}/*{.rb,.c}") do
+  Dir.chdir("ext/#{NAME}") do
+    ruby "extconf.rb"
+    sh "make"
   end
+  mkdir_p "lib/#{NAME}"
+  cp FileList["ext/#{NAME}/#{NAME}.{so,bundle}"], "lib/#{NAME}"
 end
 
-def bits
-  1.size * 8
-end
+task :test => "lib/#{NAME}/#{NAME}.so"
+task :test => :prepare_test_db
 
-def os_type
-  "#{platform}#{bits}"
-end
+CLEAN.include('ext/**/*.{o,log,so,bundle}')
+CLEAN.include('ext/**/Makefile')
+CLEAN.include('ext/**/conftest*')
+CLOBBER.include('lib/**/*.{so,bundle}')
 
-task :default => :test
-task :cruise => :test
-
-task :test => [:build, :prepare_test_db]
 Rake::TestTask.new do |t|
   t.test_files = FileList["test/test.rb"]
-  t.verbose = true
 end
+
+desc "Run tests"
+task :default => :test
+task :cruise => :test
 
 task :prepare_test_db do
   database_config = YAML::load_file("test/database.yml")
@@ -40,33 +36,4 @@ task :prepare_test_db do
   end
   sh "mysqladmin", "-uroot", "create", database_config['database']
   sh "mysql", "-uroot", "-e", "grant all on #{database_config['database']}.* to '#{database_config['username']}'@'localhost' identified by '#{database_config['password']}'"
-end
-
-desc "build the shared library"
-task :build => [:clean, :compile] do
-  Dir["*.so", "*.dll", "*.bundle"].each do |file|
-    new_name = file.pathmap("%{$,*}n%x") { "64" if os_type == "linux64" }
-    mv file, "lib/#{new_name}", :verbose => true
-  end
-end
-
-desc 'Compile C source files'
-task :compile => 'Makefile' do
-  sh 'make'
-end
-
-file 'Makefile' => ['extconf.rb', 'Rakefile'] do
-  ruby "extconf.rb"
-  if platform == 'darwin'
-    mf = File.read("Makefile")
-    open("Makefile", "w") do |f|
-      f << mf.gsub(/-ppc/, '').gsub(/-arch i386/, '')
-    end
-  end
-end
-
-desc 'Update SQL-dump'
-task :update_dump do
-  rm_f "#{MY_DIR}/test/fixtures.sql"
-  Rake::Task[:test].invoke
 end

@@ -140,7 +140,7 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
   def test_should_not_link_against_libruby_see_bug_12701
     running_on_mac = RUBY_PLATFORM.include?("darwin")
     dependency_checker_command = running_on_mac ? "otool -L" : "ldd"
-    libraries = "#{LIB_DIR}/mysql_blob_streaming_stream*"
+    libraries = "#{LIB_DIR}/mysql_blob_streaming/mysql_blob_streaming*"
     dependencies = %x{#{dependency_checker_command} #{libraries} 2> /dev/null}
 
     assert !Dir.glob(libraries).empty?
