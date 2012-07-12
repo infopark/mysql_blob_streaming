@@ -91,14 +91,8 @@ static VALUE stmt_fetch_and_write(VALUE obj, VALUE rb_buffer_length)
 }
 
 
-void Init_mysql_blob_streaming_stream()
+void Init_mysql_blob_streaming()
 {
     VALUE rb_mMysqlBlobStreaming = rb_define_module("MysqlBlobStreaming");
     rb_define_method(rb_mMysqlBlobStreaming, "stream", stmt_fetch_and_write, 1);
-}
-
-
-void Init_mysql_blob_streaming_stream64()
-{
-    Init_mysql_blob_streaming_stream();
 }

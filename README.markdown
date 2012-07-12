@@ -3,7 +3,7 @@
 It provides the module MysqlBlobStreaming, which gives the adaptor the ability
 of streaming blobs right out of the MySQL database.
 
-(c) 2008-2011 Infopark AG. See MIT-LICENSE for licensing details.
+(c) 2008-2012 Infopark AG. See MIT-LICENSE for licensing details.
 
 ## Dependencies
 
@@ -13,7 +13,6 @@ of streaming blobs right out of the MySQL database.
 
 ## Building
 
-    rake build
     gem build mysql_blob_streaming.gemspec
 
 ## Installation
