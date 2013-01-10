@@ -48,7 +48,6 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
 
   def teardown
     @mysql.close if @mysql
-    @stmt.close if @stmt
     FileUtils.rm_rf TMP_DIR
   end
 
@@ -61,9 +60,7 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
   def test_buffer_is_less_than_null
     output = output_of 'first'
     @stmt.file = File.new(output, 'w')
-    @stmt.execute 'first'
-
-    assert_raise(RuntimeError){@stmt.stream -123}
+    assert_raise(RuntimeError){@stmt.stream -123, "SELECT data FROM blobs WHERE name = 'first'"}
   end
 
   def test_blob_data_is_null
@@ -154,9 +151,9 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
   # Helpers
   def stream(id, output, buffer_size = 65000)
     @stmt.file = File.new(output, 'w')
-    @stmt.execute id
     yield(@stmt) if block_given?
-    @stmt.stream buffer_size
+    # TODO: id needs to by msql escaped!!!
+    @stmt.stream buffer_size, "SELECT data FROM blobs WHERE name = '#{id}'"
     @stmt.file.close
   end
 
