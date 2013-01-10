@@ -10,9 +10,11 @@ $LOAD_PATH.unshift(LIB_DIR)
 require 'rubygems'
 require 'test/unit'
 require 'fileutils'
-require 'mysql'
 require "#{MY_DIR}/fixtures"
 require "mysql_blob_streaming"
+
+gem 'mysql2', '0.3.11'
+require 'mysql2'
 
 Fixtures.insert
 
@@ -22,13 +24,13 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
     FileUtils.mkdir TMP_DIR
 
     mysql_args = YAML::load_file("#{MY_DIR}/database.yml")
-    @mysql = Mysql.new(
-      'localhost',
-      mysql_args['username'],
-      mysql_args['password'],
-      mysql_args['database']
-    )
-    @stmt = @mysql.prepare 'SELECT data FROM blobs WHERE name = ?'
+    @mysql = Mysql2::Client.new({
+      :host => 'localhost',
+      :username => mysql_args['username'],
+      :password => mysql_args['password'],
+      :database => mysql_args['database'],
+    })
+    @stmt = Object.new
 
     class << @stmt
       include MysqlBlobStreaming
@@ -60,7 +62,9 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
   def test_buffer_is_less_than_null
     output = output_of 'first'
     @stmt.file = File.new(output, 'w')
-    assert_raise(RuntimeError){@stmt.stream -123, "SELECT data FROM blobs WHERE name = 'first'"}
+    assert_raise(RuntimeError) do
+      @stmt.stream @mysql, "SELECT data FROM blobs WHERE name = 'first'", -123
+    end
   end
 
   def test_blob_data_is_null
@@ -152,8 +156,8 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
   def stream(id, output, buffer_size = 65000)
     @stmt.file = File.new(output, 'w')
     yield(@stmt) if block_given?
-    # TODO: id needs to by msql escaped!!!
-    @stmt.stream buffer_size, "SELECT data FROM blobs WHERE name = '#{id}'"
+    escaped = @mysql.escape(id)
+    @stmt.stream @mysql, "SELECT data FROM blobs WHERE name = '#{escaped}'", buffer_size
     @stmt.file.close
   end
 

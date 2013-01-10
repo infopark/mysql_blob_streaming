@@ -1,5 +1,5 @@
 ---
-adapter: mysql
+adapter: mysql2
 database: mysql_blob_streaming
 username: mbs
 password: mbs
