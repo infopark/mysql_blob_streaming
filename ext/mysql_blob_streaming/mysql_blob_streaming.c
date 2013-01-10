@@ -84,16 +84,16 @@ static int determine_blob_length(MYSQL_STMT *stmt, MYSQL_BIND *bind)
 }
 
 
-static void loop_store_buffer(MYSQL_STMT *stmt, MYSQL_BIND *bind, int buffer_length, int total_blob_length, VALUE obj)
+static void loop_store_buffer(MYSQL_STMT *stmt, MYSQL_BIND *bind, int total_blob_length, VALUE obj)
 {
-    long loops = abs(total_blob_length / buffer_length);
+    long loops = abs(total_blob_length / bind->buffer_length);
     long i;
     for (i = 0; i < loops; ++i) {
-        store_buffer(stmt, i * buffer_length, bind, buffer_length, obj);
+        store_buffer(stmt, i * bind->buffer_length, bind, bind->buffer_length, obj);
     }
-    int new_bufflen = total_blob_length % buffer_length;
+    int new_bufflen = total_blob_length % bind->buffer_length;
     if (new_bufflen) {
-        store_buffer(stmt, loops * buffer_length, bind, new_bufflen, obj);
+        store_buffer(stmt, loops * bind->buffer_length, bind, new_bufflen, obj);
     }
 }
 
@@ -145,7 +145,7 @@ static VALUE stmt_fetch_and_write(VALUE obj, VALUE rb_mysql2_client, VALUE rb_qu
     MYSQL_BIND *bind = build_result_bind(stmt, buffer_length);
 
     int total_blob_length = determine_blob_length(stmt, bind);
-    loop_store_buffer(stmt, bind, buffer_length, total_blob_length, obj);
+    loop_store_buffer(stmt, bind, total_blob_length, obj);
 
     mysql_stmt_close(stmt);
     free_result_bind(bind);
