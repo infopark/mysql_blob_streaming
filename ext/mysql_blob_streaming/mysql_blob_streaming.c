@@ -54,12 +54,12 @@ static void store_buffer(MYSQL_STMT *stmt, int offset_index, MYSQL_BIND *bind, i
     if (status != 0) {
         rb_raise(rb_eRuntimeError, "Fetching column failed");
     }
-    if (!*bind[0].is_null) {
-        if (bind[0].buffer_type == MYSQL_TYPE_BLOB) {
-            rb_funcall(obj, rb_intern("handle_data"), 1, rb_str_new(bind[0].buffer, chunk_length));
+    if (!*bind->is_null) {
+        if (bind->buffer_type == MYSQL_TYPE_BLOB) {
+            rb_funcall(obj, rb_intern("handle_data"), 1, rb_str_new(bind->buffer, chunk_length));
         } else {
             rb_raise(rb_eRuntimeError, "wrong buffer_type (must be: MYSQL_TYPE_BLOB): %d",
-                    bind[0].buffer_type);
+                    bind->buffer_type);
         }
     }
 }
@@ -67,8 +67,8 @@ static void store_buffer(MYSQL_STMT *stmt, int offset_index, MYSQL_BIND *bind, i
 
 static int determine_blob_length(MYSQL_STMT *stmt, MYSQL_BIND *bind)
 {
-    int original_buffer_length = bind[0].buffer_length;
-    bind[0].buffer_length = 0;
+    int original_buffer_length = bind->buffer_length;
+    bind->buffer_length = 0;
 
     if (mysql_stmt_bind_result(stmt, bind) != 0) {
         rb_raise(rb_eRuntimeError, "determine_blob_length2 Could not determine the blob length: bind failed");
@@ -79,8 +79,8 @@ static int determine_blob_length(MYSQL_STMT *stmt, MYSQL_BIND *bind)
         rb_raise(rb_eRuntimeError, "determine_blob_length2 Could not determine the blob length: fetch failed");
     }
 
-    bind[0].buffer_length = original_buffer_length;
-    return *bind[0].length;
+    bind->buffer_length = original_buffer_length;
+    return *bind->length;
 }
 
 
@@ -101,15 +101,15 @@ static void loop_store_buffer(MYSQL_STMT *stmt, MYSQL_BIND *bind, int total_blob
 static MYSQL_BIND * build_result_bind(MYSQL_STMT *stmt, int buffer_length)
 {
     MYSQL_BIND *bind = (MYSQL_BIND *)calloc(1, sizeof(MYSQL_BIND));
-    bind[0].length = (unsigned long *)malloc(sizeof(unsigned long));
-    bind[0].is_null = (my_bool *)malloc(sizeof(my_bool));
-    bind[0].buffer_length = buffer_length;
-    bind[0].buffer = malloc(buffer_length);
+    bind->length = (unsigned long *)malloc(sizeof(unsigned long));
+    bind->is_null = (my_bool *)malloc(sizeof(my_bool));
+    bind->buffer_length = buffer_length;
+    bind->buffer = malloc(buffer_length);
 
     MYSQL_RES *result_set = mysql_stmt_result_metadata(stmt);
     if ((result_set != NULL) && (mysql_num_fields(result_set) >= 1)) {
         MYSQL_FIELD *columns = mysql_fetch_fields(result_set);
-        bind[0].buffer_type = columns[0].type;
+        bind->buffer_type = columns->type;
     }
 
     return bind;
@@ -119,7 +119,7 @@ static MYSQL_BIND * build_result_bind(MYSQL_STMT *stmt, int buffer_length)
 static void free_result_bind(MYSQL_BIND *bind)
 {
     if (bind != NULL) {
-        free(bind[0].buffer);
+        free(bind->buffer);
         free(bind->length);
         free(bind->is_null);
         free(bind);
