@@ -7,13 +7,10 @@ LIB_DIR = "#{MY_DIR}/../lib"
 # otherwise we might test against a gem installed in the system
 $LOAD_PATH.unshift(LIB_DIR)
 
-require 'rubygems'
 require 'test/unit'
 require 'fileutils'
 require "#{MY_DIR}/fixtures"
 require "mysql_blob_streaming"
-
-gem 'mysql2', '0.3.11'
 require 'mysql2'
 
 Fixtures.insert
