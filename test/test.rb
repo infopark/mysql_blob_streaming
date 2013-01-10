@@ -96,13 +96,13 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
     assert_equal(File.read(input), File.read(output))
   end
 
-  def test_stream_blob_almoust_equal_to_buffer_but_less
+  def test_stream_blob_almost_equal_to_buffer_but_less
     input, output = io_of 'first'
     stream('first', output, File.size(input) - 1)
     assert_equal(File.read(input), File.read(output))
   end
 
-  def test_stream_blob_almoust_equal_to_buffer_but_bigger
+  def test_stream_blob_almost_equal_to_buffer_but_bigger
     input, output = io_of 'first'
     stream('first', output, File.size(input) + 1)
     assert_equal(File.read(input), File.read(output))
