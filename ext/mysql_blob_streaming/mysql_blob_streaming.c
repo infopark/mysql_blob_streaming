@@ -5,24 +5,20 @@
 #include <errmsg.h>
 
 
-// TODO: This method needs to recycle the connection of Mysql2::Client!
-static MYSQL * mysql_connection(VALUE obj)
+typedef struct {
+  VALUE encoding;
+  int active;
+  int reconnect_enabled;
+  int closed;
+  MYSQL *client;
+} mysql_client_wrapper;
+
+
+static MYSQL * mysql_connection(VALUE rb_mysql2_client)
 {
-    MYSQL *conn;
-    conn = mysql_init(NULL);
-    if (conn == NULL) {
-        printf("Error %u: %s\n", mysql_errno(conn), mysql_error(conn));
-        exit(1);
-    }
-
-    if (mysql_real_connect(conn, "localhost", "mbs", "mbs", "mysql_blob_streaming", 0, NULL, 0) == NULL) {
-        printf("Error %u: %s\n", mysql_errno(conn), mysql_error(conn));
-        exit(1);
-    } else {
-        // printf("Erfolgreich verbunden!!!\n");
-    }
-
-    return conn;
+    mysql_client_wrapper *wrapper;
+    Data_Get_Struct(rb_mysql2_client, mysql_client_wrapper, wrapper);
+    return wrapper->client;
 }
 
 
@@ -131,7 +127,7 @@ static void free_result_bind(MYSQL_BIND *bind)
 }
 
 
-static VALUE stmt_fetch_and_write(VALUE obj, VALUE rb_buffer_length, VALUE rb_query)
+static VALUE stmt_fetch_and_write(VALUE obj, VALUE rb_mysql2_client, VALUE rb_query, VALUE rb_buffer_length)
 {
     int buffer_length = FIX2INT(rb_buffer_length);
 
@@ -144,7 +140,7 @@ static VALUE stmt_fetch_and_write(VALUE obj, VALUE rb_buffer_length, VALUE rb_qu
 
     char *query = RSTRING_PTR(rb_query);
 
-    MYSQL *conn = mysql_connection(obj);
+    MYSQL *conn = mysql_connection(rb_mysql2_client);
     MYSQL_STMT *stmt = prepare_and_execute_stmt_with_query(conn, query);
     MYSQL_BIND *bind = build_result_bind(stmt, buffer_length);
 
@@ -160,5 +156,5 @@ static VALUE stmt_fetch_and_write(VALUE obj, VALUE rb_buffer_length, VALUE rb_qu
 void Init_mysql_blob_streaming()
 {
     VALUE rb_mMysqlBlobStreaming = rb_define_module("MysqlBlobStreaming");
-    rb_define_method(rb_mMysqlBlobStreaming, "stream", stmt_fetch_and_write, 2);
+    rb_define_method(rb_mMysqlBlobStreaming, "stream", stmt_fetch_and_write, 3);
 }
