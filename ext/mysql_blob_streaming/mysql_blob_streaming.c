@@ -101,8 +101,8 @@ static void loop_store_buffer(MYSQL_STMT *stmt, MYSQL_BIND *bind, int total_blob
 static MYSQL_BIND * build_result_bind(MYSQL_STMT *stmt, int buffer_length)
 {
     MYSQL_BIND *bind = (MYSQL_BIND *)calloc(1, sizeof(MYSQL_BIND));
-    bind->length = (unsigned long *)malloc(sizeof(unsigned long));
-    bind->is_null = (my_bool *)malloc(sizeof(my_bool));
+    bind->length = (unsigned long *)calloc(1, sizeof(unsigned long));
+    bind->is_null = (my_bool *)calloc(1, sizeof(my_bool));
     bind->buffer_length = buffer_length;
     bind->buffer = malloc(buffer_length);
 
