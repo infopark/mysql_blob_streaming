@@ -1,3 +1,4 @@
+# encoding: UTF-8
 MY_DIR = File.dirname(__FILE__)
 FIX_DIR = "#{MY_DIR}/fixtures"
 TMP_DIR = "#{MY_DIR}/tmp"
@@ -133,6 +134,12 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
     input, output = io_of 'small'
     stream 'small', output
     assert_equal(File.read(input), File.read(output))
+  end
+
+  def test_stream_with_utf8_name
+    output = output_of 'hellö'
+    stream 'hellö', output
+    assert_equal('wörld', File.read(output))
   end
 
   def test_should_not_link_against_libruby_see_bug_12701
