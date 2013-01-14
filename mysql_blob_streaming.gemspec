@@ -1,4 +1,4 @@
-SPEC = Gem::Specification.new do |spec|
+Gem::Specification.new do |spec|
   spec.name = 'mysql_blob_streaming'
   spec.version = %x(git describe --always).chomp.gsub(/-([0-9]+)-g/, '.\\1.')
   spec.summary = 'A blob streaming extension for the native Ruby-MySQL2 adapter'
