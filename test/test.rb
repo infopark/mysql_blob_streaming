@@ -1,3 +1,4 @@
+# encoding: UTF-8
 MY_DIR = File.dirname(__FILE__)
 FIX_DIR = "#{MY_DIR}/fixtures"
 TMP_DIR = "#{MY_DIR}/tmp"
@@ -7,12 +8,11 @@ LIB_DIR = "#{MY_DIR}/../lib"
 # otherwise we might test against a gem installed in the system
 $LOAD_PATH.unshift(LIB_DIR)
 
-require 'rubygems'
 require 'test/unit'
 require 'fileutils'
-require 'mysql'
 require "#{MY_DIR}/fixtures"
 require "mysql_blob_streaming"
+require 'mysql2'
 
 Fixtures.insert
 
@@ -22,33 +22,16 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
     FileUtils.mkdir TMP_DIR
 
     mysql_args = YAML::load_file("#{MY_DIR}/database.yml")
-    @mysql = Mysql.new(
-      'localhost',
-      mysql_args['username'],
-      mysql_args['password'],
-      mysql_args['database']
-    )
-    @stmt = @mysql.prepare 'SELECT data FROM blobs WHERE name = ?'
-
-    class << @stmt
-      include MysqlBlobStreaming
-
-      attr_accessor :file
-
-      def counter; @counter; end
-      def reset; @counter = 0; end
-
-      def handle_data(data)
-        @counter ||= 0;
-        @counter = @counter + 1
-        file << data
-      end
-    end
+    @mysql = Mysql2::Client.new({
+      :host => 'localhost',
+      :username => mysql_args['username'],
+      :password => mysql_args['password'],
+      :database => mysql_args['database'],
+    })
   end
 
   def teardown
     @mysql.close if @mysql
-    @stmt.close if @stmt
     FileUtils.rm_rf TMP_DIR
   end
 
@@ -59,11 +42,13 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
   end
 
   def test_buffer_is_less_than_null
-    output = output_of 'first'
-    @stmt.file = File.new(output, 'w')
-    @stmt.execute 'first'
-
-    assert_raise(RuntimeError){@stmt.stream -123}
+    assert_raise_message(/buffer size must be integer/, RuntimeError) do
+      MysqlBlobStreaming.stream(
+        @mysql,
+        "SELECT data FROM blobs WHERE name = 'first'",
+        -123
+      ){ |chunk| raise "this should not happen!" }
+    end
   end
 
   def test_blob_data_is_null
@@ -77,10 +62,11 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
     input_size = File.size("#{FIX_DIR}/first")
 
     stream 'first', output, 1
-    assert_equal(input_size, @stmt.counter)
+    assert_equal(input_size, @counter)
 
-    stream('first', output, input_size){|stmt| stmt.reset}
-    assert_equal(1, @stmt.counter)
+    @counter = 0
+    stream('first', output, input_size)
+    assert_equal(1, @counter)
   end
 
   def test_stream_blob_less_than_buffer
@@ -95,13 +81,13 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
     assert_equal(File.read(input), File.read(output))
   end
 
-  def test_stream_blob_almoust_equal_to_buffer_but_less
+  def test_stream_blob_almost_equal_to_buffer_but_less
     input, output = io_of 'first'
     stream('first', output, File.size(input) - 1)
     assert_equal(File.read(input), File.read(output))
   end
 
-  def test_stream_blob_almoust_equal_to_buffer_but_bigger
+  def test_stream_blob_almost_equal_to_buffer_but_bigger
     input, output = io_of 'first'
     stream('first', output, File.size(input) + 1)
     assert_equal(File.read(input), File.read(output))
@@ -137,6 +123,12 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
     assert_equal(File.read(input), File.read(output))
   end
 
+  def test_stream_with_utf8_name
+    output = output_of 'hellö'
+    stream 'hellö', output
+    assert_equal('wörld', File.read(output))
+  end
+
   def test_should_not_link_against_libruby_see_bug_12701
     running_on_mac = RUBY_PLATFORM.include?("darwin")
     dependency_checker_command = running_on_mac ? "otool -L" : "ldd"
@@ -153,11 +145,18 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
 
   # Helpers
   def stream(id, output, buffer_size = 65000)
-    @stmt.file = File.new(output, 'w')
-    @stmt.execute id
-    yield(@stmt) if block_given?
-    @stmt.stream buffer_size
-    @stmt.file.close
+    file = File.new(output, 'wb')
+    escaped = @mysql.escape(id)
+    MysqlBlobStreaming.stream(
+        @mysql,
+        "SELECT data FROM blobs WHERE name = '#{escaped}'",
+        buffer_size
+    ) do |chunk|
+      @counter ||= 0
+      @counter = @counter + 1
+      file << chunk
+    end
+    file.close
   end
 
   def output_of(id)

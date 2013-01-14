@@ -1,5 +1,6 @@
 Makefile
 mkmf.log
+Gemfile.lock
 mysql_blob_streaming-*.gem
 /ext/mysql_blob_streaming/conftest.*
 /ext/mysql_blob_streaming/mysql_blob_streaming.bundle

@@ -1,4 +1,4 @@
-require 'rubygems'
+# encoding: UTF-8
 require 'active_record'
 
 module Fixtures
@@ -29,5 +29,6 @@ module Fixtures
       )
     end
     Blob.create(:name => 'empty', :data => nil)
+    Blob.create(:name => 'hellö', :data => "wörld")
   end
 end
