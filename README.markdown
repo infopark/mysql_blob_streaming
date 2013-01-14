@@ -1,6 +1,6 @@
-# A blob streaming extension for the native Ruby-MySQL adaptor.
+# A blob streaming extension for the native Ruby-MySQL2 adaptor.
 
-It provides the module MysqlBlobStreaming, which gives the adaptor the ability
+It provides the module MysqlBlobStreaming, which gives the mysql2 adaptor the ability
 of streaming blobs right out of the MySQL database.
 
 (c) 2008-2012 Infopark AG. See MIT-LICENSE for licensing details.
@@ -9,7 +9,7 @@ of streaming blobs right out of the MySQL database.
 
   * Ruby-headers
   * MySQL-headers
-  * [Native Ruby-MySQL adaptor](http://www.tmtm.org/en/mysql/ruby)
+  * [mysql2 Gem](https://rubygems.org/gems/mysql2)
 
 ## Building
 

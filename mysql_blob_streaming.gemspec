@@ -1,7 +1,7 @@
 SPEC = Gem::Specification.new do |spec|
   spec.name = 'mysql_blob_streaming'
-  spec.version = "1.1.3"
-  spec.summary = 'A blob streaming extension for the native Ruby-MySQL adapter'
+  spec.version = %x(git describe --always).chomp.gsub(/-([0-9]+)-g/, '.\\1.')
+  spec.summary = 'A blob streaming extension for the native Ruby-MySQL2 adapter'
   spec.author = 'Infopark AG'
   spec.homepage = 'http://www.infopark.de/'
   spec.email = 'info@infopark.de'
@@ -10,7 +10,7 @@ SPEC = Gem::Specification.new do |spec|
     This GEM is required by the Infopark Rails Connector (RC) when using MySQL.
   EOF
 
-  spec.add_dependency('mysql', '>=2.7')
+  spec.add_dependency('mysql2', '0.3.11')
   spec.required_ruby_version = '>=1.8.7'
 
   spec.files = Dir["lib/**/*.rb", "ext/**/*.{c,h,rb}", "README.markdown"]
