@@ -28,22 +28,6 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
       :password => mysql_args['password'],
       :database => mysql_args['database'],
     })
-    @stmt = Object.new
-
-    class << @stmt
-      include MysqlBlobStreaming
-
-      attr_accessor :file
-
-      def counter; @counter; end
-      def reset; @counter = 0; end
-
-      def handle_data(data)
-        @counter ||= 0;
-        @counter = @counter + 1
-        file << data
-      end
-    end
   end
 
   def teardown
@@ -58,10 +42,12 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
   end
 
   def test_buffer_is_less_than_null
-    output = output_of 'first'
-    @stmt.file = File.new(output, 'w')
-    assert_raise(RuntimeError) do
-      @stmt.stream @mysql, "SELECT data FROM blobs WHERE name = 'first'", -123
+    assert_raise_message(/buffer size must be integer/, RuntimeError) do
+      MysqlBlobStreaming.stream(
+        @mysql,
+        "SELECT data FROM blobs WHERE name = 'first'",
+        -123
+      ){ |chunk| raise "this should not happen!" }
     end
   end
 
@@ -76,10 +62,11 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
     input_size = File.size("#{FIX_DIR}/first")
 
     stream 'first', output, 1
-    assert_equal(input_size, @stmt.counter)
+    assert_equal(input_size, @counter)
 
-    stream('first', output, input_size){|stmt| stmt.reset}
-    assert_equal(1, @stmt.counter)
+    @counter = 0
+    stream('first', output, input_size)
+    assert_equal(1, @counter)
   end
 
   def test_stream_blob_less_than_buffer
@@ -158,11 +145,18 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
 
   # Helpers
   def stream(id, output, buffer_size = 65000)
-    @stmt.file = File.new(output, 'w')
-    yield(@stmt) if block_given?
+    file = File.new(output, 'wb')
     escaped = @mysql.escape(id)
-    @stmt.stream @mysql, "SELECT data FROM blobs WHERE name = '#{escaped}'", buffer_size
-    @stmt.file.close
+    MysqlBlobStreaming.stream(
+        @mysql,
+        "SELECT data FROM blobs WHERE name = '#{escaped}'",
+        buffer_size
+    ) do |chunk|
+      @counter ||= 0
+      @counter = @counter + 1
+      file << chunk
+    end
+    file.close
   end
 
   def output_of(id)

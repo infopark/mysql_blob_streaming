@@ -48,7 +48,7 @@ static MYSQL_STMT * prepare_and_execute_stmt_with_query(MYSQL *conn, char *query
 }
 
 
-static void store_buffer(MYSQL_STMT *stmt, int offset_index, MYSQL_BIND *bind, int chunk_length, VALUE obj)
+static void store_buffer(MYSQL_STMT *stmt, int offset_index, MYSQL_BIND *bind, int chunk_length, VALUE block, VALUE obj)
 {
     int status = mysql_stmt_fetch_column(stmt, bind, 0, offset_index);
     if (status != 0) {
@@ -56,7 +56,11 @@ static void store_buffer(MYSQL_STMT *stmt, int offset_index, MYSQL_BIND *bind, i
     }
     if (!*bind->is_null) {
         if (bind->buffer_type == MYSQL_TYPE_BLOB) {
-            rb_funcall(obj, rb_intern("handle_data"), 1, rb_str_new(bind->buffer, chunk_length));
+            if(RTEST(block)) {
+                rb_funcall(block, rb_intern("call"), 1, rb_str_new(bind->buffer, chunk_length));
+            } else {
+                rb_raise(rb_eArgError, "a block is required");
+            }
         } else {
             rb_raise(rb_eRuntimeError, "wrong buffer_type (must be: MYSQL_TYPE_BLOB): %d",
                     bind->buffer_type);
@@ -84,16 +88,16 @@ static int determine_blob_length(MYSQL_STMT *stmt, MYSQL_BIND *bind)
 }
 
 
-static void loop_store_buffer(MYSQL_STMT *stmt, MYSQL_BIND *bind, int total_blob_length, VALUE obj)
+static void loop_store_buffer(MYSQL_STMT *stmt, MYSQL_BIND *bind, int total_blob_length, VALUE block, VALUE obj)
 {
     long loops = abs(total_blob_length / bind->buffer_length);
     long i;
     for (i = 0; i < loops; ++i) {
-        store_buffer(stmt, i * bind->buffer_length, bind, bind->buffer_length, obj);
+        store_buffer(stmt, i * bind->buffer_length, bind, bind->buffer_length, block, obj);
     }
     int new_bufflen = total_blob_length % bind->buffer_length;
     if (new_bufflen) {
-        store_buffer(stmt, loops * bind->buffer_length, bind, new_bufflen, obj);
+        store_buffer(stmt, loops * bind->buffer_length, bind, new_bufflen, block, obj);
     }
 }
 
@@ -127,8 +131,16 @@ static void free_result_bind(MYSQL_BIND *bind)
 }
 
 
-static VALUE stmt_fetch_and_write(VALUE obj, VALUE rb_mysql2_client, VALUE rb_query, VALUE rb_buffer_length)
+// ruby interface:
+// MysqlBlobStreaming.stream(mysql2_client, query, buffer_length, &block)
+static VALUE stmt_fetch_and_write(int argc, VALUE *argv, VALUE self)
 {
+    VALUE rb_mysql2_client;
+    VALUE rb_query;
+    VALUE rb_buffer_length;
+    VALUE rb_block;
+    rb_scan_args(argc, argv, "3&", &rb_mysql2_client, &rb_query, &rb_buffer_length, &rb_block);
+
     int buffer_length = FIX2INT(rb_buffer_length);
 
     if (buffer_length == 0) {
@@ -145,7 +157,7 @@ static VALUE stmt_fetch_and_write(VALUE obj, VALUE rb_mysql2_client, VALUE rb_qu
     MYSQL_BIND *bind = build_result_bind(stmt, buffer_length);
 
     int total_blob_length = determine_blob_length(stmt, bind);
-    loop_store_buffer(stmt, bind, total_blob_length, obj);
+    loop_store_buffer(stmt, bind, total_blob_length, rb_block, self);
 
     mysql_stmt_close(stmt);
     free_result_bind(bind);
@@ -155,6 +167,6 @@ static VALUE stmt_fetch_and_write(VALUE obj, VALUE rb_mysql2_client, VALUE rb_qu
 
 void Init_mysql_blob_streaming()
 {
-    VALUE rb_mMysqlBlobStreaming = rb_define_module("MysqlBlobStreaming");
-    rb_define_method(rb_mMysqlBlobStreaming, "stream", stmt_fetch_and_write, 3);
+    VALUE rb_mMysqlBlobStreaming = rb_define_class("MysqlBlobStreaming", rb_cObject);
+    rb_define_singleton_method(rb_mMysqlBlobStreaming, "stream", stmt_fetch_and_write, -1);
 }
