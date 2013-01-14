@@ -9,6 +9,7 @@ Gem::Specification.new do |spec|
   spec.description = <<-EOF
     This GEM is required by the Infopark Rails Connector (RC) when using MySQL.
   EOF
+  spec.license = 'MIT'
 
   spec.add_dependency('mysql2', '0.3.11')
   spec.required_ruby_version = '>=1.8.7'
