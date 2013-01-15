@@ -5,6 +5,19 @@ of streaming blobs right out of the MySQL database.
 
 (c) 2008-2012 Infopark AG. See MIT-LICENSE for licensing details.
 
+## Usage
+
+    require 'mysql_blob_streaming'
+    require 'mysql2'
+
+    client = Mysql2::Client.new(...)
+    query = "SELECT data FROM table_name WHERE id = '23'"
+    buffer_size = 1024000 # number of bytes per chunk
+
+    MysqlBlobStreaming.stream(client, query, buffer_size) do |chunk|
+      # do something with the chunk e.g. write it to file.
+    end
+
 ## Dependencies
 
   * Ruby-headers
