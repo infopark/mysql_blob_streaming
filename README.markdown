@@ -1,6 +1,10 @@
-# A blob streaming extension for the native Ruby-MySQL2 adaptor.
+# MysqlBlobStreaming
+[![Build Status](https://travis-ci.org/infopark/mysql_blob_streaming.png?branch=master)][travis]
 
-It provides the module MysqlBlobStreaming, which gives the mysql2 adaptor the ability
+[travis]: http://travis-ci.org/infopark/mysql_blob_streaming
+
+A blob streaming extension for the native Ruby-MySQL2 adaptor.
+It provides the class `MysqlBlobStreaming`, which gives the mysql2 adaptor the ability
 of streaming blobs right out of the MySQL database.
 
 (c) 2008-2012 Infopark AG. See MIT-LICENSE for licensing details.
