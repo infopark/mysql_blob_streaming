@@ -7,9 +7,11 @@
 
 typedef struct {
   VALUE encoding;
-  int active;
+  VALUE active_thread;
   int reconnect_enabled;
-  int closed;
+  int active;
+  int connected;
+  int initialized;
   MYSQL *client;
 } mysql_client_wrapper;
 
