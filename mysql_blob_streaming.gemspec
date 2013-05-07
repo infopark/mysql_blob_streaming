@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   EOF
   spec.license = 'MIT'
 
-  spec.add_dependency('mysql2', '0.3.11')
+  spec.add_dependency('mysql2', '0.3.12b6')
   spec.required_ruby_version = '>=1.8.7'
 
   spec.files = Dir["lib/**/*.rb", "ext/**/*.{c,h,rb}", "README.markdown"]
