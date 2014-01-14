@@ -1,4 +1,4 @@
-source :rubygems
+source 'https://rubygems.org'
 
 # Dependencies from gemspec file
 gemspec
@@ -7,4 +7,4 @@ gemspec
 gem "rake"
 gem "test-unit"
 gem "pry"
-gem "activerecord"
+gem "activerecord", "~> 3.2"
