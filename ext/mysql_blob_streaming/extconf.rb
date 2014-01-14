@@ -2,6 +2,7 @@ require "mkmf"
 
 additional_mysql_include_dirs = [
     '/usr/local/mysql/include',
+    '/usr/local/include/mysql',
     '/usr/include/mysql']
 additional_mysql_lib_dirs = additional_mysql_include_dirs.map{
     |d| d.sub('include', 'lib')}
