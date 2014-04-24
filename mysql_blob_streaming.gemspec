@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.license = 'MIT'
 
   spec.add_dependency('mysql2', '0.3.15')
-  spec.required_ruby_version = '>=1.8.7'
+  spec.required_ruby_version = '>=1.9.2'
 
   spec.files = Dir["lib/**/*.rb", "ext/**/*.{c,h,rb}", "README.markdown"]
   spec.extensions = ['ext/mysql_blob_streaming/extconf.rb']
