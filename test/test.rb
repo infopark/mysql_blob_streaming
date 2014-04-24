@@ -23,10 +23,10 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
 
     mysql_args = YAML::load_file("#{MY_DIR}/database.yml")
     @mysql = Mysql2::Client.new({
-      :host => 'localhost',
-      :username => mysql_args['username'],
-      :password => mysql_args['password'],
-      :database => mysql_args['database'],
+      host: 'localhost',
+      username: mysql_args['username'],
+      password: mysql_args['password'],
+      database: mysql_args['database'],
     })
   end
 

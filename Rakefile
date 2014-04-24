@@ -13,8 +13,8 @@ file "lib/#{NAME}/#{NAME}.so" => Dir.glob("ext/#{NAME}/*{.rb,.c}") do
   cp FileList["ext/#{NAME}/#{NAME}.{so,bundle}"], "lib/#{NAME}"
 end
 
-task :test => "lib/#{NAME}/#{NAME}.so"
-task :test => :prepare_test_db
+task test: "lib/#{NAME}/#{NAME}.so"
+task test: :prepare_test_db
 
 CLEAN.include('ext/**/*.{o,log,so,bundle}')
 CLEAN.include('ext/**/Makefile')

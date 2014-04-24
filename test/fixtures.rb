@@ -24,11 +24,11 @@ module Fixtures
     FixtureMigration.migrate :up
     %w|first second small|.each do |name|
       Blob.create(
-        :name => name,
-        :data => File::read("#{Fixtures::MY_DIR}/fixtures/#{name}")
+        name: name,
+        data: File::read("#{Fixtures::MY_DIR}/fixtures/#{name}")
       )
     end
-    Blob.create(:name => 'empty', :data => nil)
-    Blob.create(:name => 'hellö', :data => "wörld")
+    Blob.create(name: 'empty', data: nil)
+    Blob.create(name: 'hellö', data: "wörld")
   end
 end
