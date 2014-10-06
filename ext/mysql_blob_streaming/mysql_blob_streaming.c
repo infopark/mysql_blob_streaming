@@ -10,6 +10,7 @@ typedef struct {
   VALUE active_thread;
   long server_version;
   int reconnect_enabled;
+  int connect_timeout;
   int active;
   int connected;
   int initialized;
