@@ -1,5 +1,6 @@
 # encoding: UTF-8
 require 'active_record'
+require 'yaml'
 
 module Fixtures
   MY_DIR = File.dirname(__FILE__)
