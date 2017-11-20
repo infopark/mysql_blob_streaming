@@ -5,9 +5,9 @@ Gem::Specification.new do |spec|
   spec.author = 'Infopark AG'
   spec.homepage = 'http://www.infopark.de/'
   spec.email = 'info@infopark.de'
-  spec.requirements << 'Infopark Rails Connector (RC)'
+  spec.requirements << 'infopark_fiona_connector'
   spec.description = <<-EOF
-    This GEM is required by the Infopark Rails Connector (RC) when using MySQL.
+    This GEM is required by the infopark_fiona_connector when using MySQL.
   EOF
   spec.license = 'MIT'
 
