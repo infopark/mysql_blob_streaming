@@ -7,4 +7,4 @@ gemspec
 gem "rake"
 gem "test-unit"
 gem "pry"
-gem "activerecord", "~> 3.2"
+gem "activerecord", "~> 4.2"
