@@ -7,4 +7,5 @@ mysql_blob_streaming-*.gem
 /ext/mysql_blob_streaming/mysql_blob_streaming.bundle
 /ext/mysql_blob_streaming/mysql_blob_streaming.so
 /ext/mysql_blob_streaming/mysql_blob_streaming.o
-/lib/mysql_blob_streaming/
+/lib/mysql_blob_streaming/*.bundle
+/lib/mysql_blob_streaming/*.so

@@ -6,5 +6,4 @@ gemspec
 # Dependencies for test environment
 gem "rake"
 gem "test-unit"
-gem "pry"
-gem "activerecord", "~> 4.2"
+gem "activerecord", "~> 5.2"
