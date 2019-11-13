@@ -10,7 +10,7 @@ module Fixtures
 
   class Blob < ActiveRecord::Base; end
 
-  class FixtureMigration < ActiveRecord::Migration
+  class FixtureMigration < ActiveRecord::Migration[5.2]
     def self.up
       create_table :blobs do |t|
         t.column :name, :string
