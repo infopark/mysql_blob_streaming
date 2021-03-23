@@ -19,7 +19,6 @@ Gem::Specification.new do |spec|
   spec.files = Dir["lib/**/*.rb", "ext/**/*.{c,h,rb}", "README.markdown"]
   spec.extensions = ['ext/mysql_blob_streaming/extconf.rb']
 
-  spec.has_rdoc = true
   spec.extra_rdoc_files = Dir['README*']
   spec.rdoc_options = ['--main', Dir['README*'].first]
 end
