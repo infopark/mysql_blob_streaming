@@ -10,5 +10,9 @@ This gem lives here https://github.com/infopark/mysql_blob_streaming.
 
 ### Compatible changes
 
-- replace deprecated for MySql 8.0 my_bool to bool type in /ext/mysql_blob_streaming/mysql_blob_streaming.c
+- add condition to check MySQL version in /ext/mysql_blob_streaming/mysql_blob_streaming.c
+  #if MYSQL_VERSION_ID >=80000
+    typedef bool my_bool;
+  #endif
+
 - remove deprecated 'spec.has_rdoc' from mysql_blob_streaming.gemspec

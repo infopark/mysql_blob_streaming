@@ -4,6 +4,9 @@
 #include <mysql.h>
 #include <errmsg.h>
 
+#if MYSQL_VERSION_ID >=80000
+  typedef bool my_bool;
+#endif
 
 typedef struct {
   VALUE encoding;
@@ -112,7 +115,7 @@ static MYSQL_BIND * build_result_bind(MYSQL_STMT *stmt, int buffer_length)
 {
     MYSQL_BIND *bind = (MYSQL_BIND *)calloc(1, sizeof(MYSQL_BIND));
     bind->length = (unsigned long *)calloc(1, sizeof(unsigned long));
-    bind->is_null = (bool *)calloc(1, sizeof(bool));
+    bind->is_null = (my_bool *)calloc(1, sizeof(my_bool));
     bind->buffer_length = buffer_length;
     bind->buffer = malloc(buffer_length);
 
