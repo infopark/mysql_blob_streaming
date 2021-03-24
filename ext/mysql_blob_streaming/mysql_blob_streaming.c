@@ -4,6 +4,9 @@
 #include <mysql.h>
 #include <errmsg.h>
 
+#if MYSQL_VERSION_ID >=80000
+  typedef bool my_bool;
+#endif
 
 typedef struct {
   VALUE encoding;
