@@ -3,8 +3,9 @@
 
 #include <mysql.h>
 #include <errmsg.h>
+#include <stdbool.h>
 
-#if MYSQL_VERSION_ID >=80000
+#if MYSQL_VERSION_ID >=80000 && MYSQL_VERSION_ID <80030
   typedef bool my_bool;
 #endif
 
