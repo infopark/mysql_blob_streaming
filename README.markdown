@@ -39,3 +39,7 @@ Install it like any other Gem:
     gem install mysql_blob_streaming-X.X.X.gem
 
 Run it with root privileges if needed.
+
+## Development/Tests
+
+    rake
