@@ -1,7 +1,7 @@
 All notable changes to this project will be documented in this file.
 
 This gem lives here https://github.com/infopark/mysql_blob_streaming.
-## v2.5.0 - 2022-03-22
+## v2.5.0 - 2022-05-03
 
 ### Reason to make changes
 
@@ -17,6 +17,7 @@ This gem lives here https://github.com/infopark/mysql_blob_streaming.
 
 - add condition to check MySQL version in /ext/mysql_blob_streaming/mysql_blob_streaming.c
   #if MYSQL_VERSION_ID >=80000 && MYSQL_VERSION_ID <80030
+    #include <stdbool.h>
     typedef bool my_bool;
   #endif
 
