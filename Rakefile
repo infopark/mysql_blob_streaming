@@ -35,5 +35,6 @@ task :prepare_test_db do
     sh "mysqladmin", "-uroot", "--force", "drop", database_config['database']
   end
   sh "mysqladmin", "-uroot", "create", database_config['database']
-  sh "mysql", "-uroot", "-e", "grant all on #{database_config['database']}.* to '#{database_config['username']}'@'localhost' identified by '#{database_config['password']}'"
+  sh "mysql", "-uroot", "-e", "CREATE USER IF NOT EXISTS '#{database_config['username']}'@'localhost' IDENTIFIED BY '#{database_config['password']}'"
+  sh "mysql", "-uroot", "-e", "GRANT ALL ON  #{database_config['database']}.* TO '#{database_config['username']}'@'localhost'"
 end

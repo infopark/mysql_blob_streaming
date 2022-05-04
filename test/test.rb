@@ -138,7 +138,7 @@ class MysqlBlobStreamingTest < Test::Unit::TestCase
     assert !Dir.glob(libraries).empty?
 
     # sanity check to see if we got any sensible output from our dependency checker at all
-    assert dependencies.include?(running_on_mac ? "libmysql" : "libc.so")
+    assert dependencies.match?(running_on_mac ? /libmysql|libmariadb/ : /libc.so/)
 
     assert !dependencies.include?("libruby")
   end
