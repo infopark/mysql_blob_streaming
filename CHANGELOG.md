@@ -1,7 +1,7 @@
 All notable changes to this project will be documented in this file.
 
 This gem lives here https://github.com/infopark/mysql_blob_streaming.
-## v2.5.1 - 2022-06-21
+## v2.5.1 - 2022-08-29
 
 ### Reason to make changes
 
