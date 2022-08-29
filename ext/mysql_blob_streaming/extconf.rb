@@ -11,6 +11,18 @@ find_header('mysql.h', *additional_mysql_include_dirs)
 find_header('errmsg.h', *additional_mysql_include_dirs)
 find_library('mysqlclient', nil, *additional_mysql_lib_dirs)
 
+if have_header('mysql.h')
+  prefix = nil
+elsif have_header('mysql/mysql.h')
+  prefix = 'mysql'
+else
+  asplode 'mysql.h'
+end
+mysql_h = [prefix, 'mysql.h'].compact.join('/')
+# my_bool is replaced by C99 bool in MySQL 8.0, but we want
+# to retain compatibility with the typedef in earlier MySQLs.
+have_type('my_bool', mysql_h)
+
 # --no-undefined forces us to link against libruby
 def remove_no_undefined(ldflags)
   ldflags.gsub("-Wl,--no-undefined", "")

@@ -4,7 +4,11 @@
 #include <mysql.h>
 #include <errmsg.h>
 
-#if MYSQL_VERSION_ID >=80000 && MYSQL_VERSION_ID <80030
+/* MySQL 8.0 replaces my_bool with C99 bool. Earlier versions of MySQL had
+ * a typedef to char. Gem users reported failures on big endian systems when
+ * using C99 bool types with older MySQLs due to mismatched behavior.
+*/
+#ifndef HAVE_TYPE_MY_BOOL
   #include <stdbool.h>
   typedef bool my_bool;
 #endif
