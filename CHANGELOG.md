@@ -1,6 +1,14 @@
 All notable changes to this project will be documented in this file.
 
 This gem lives here https://github.com/infopark/mysql_blob_streaming.
+
+## v2.5.1 - 2023-05-10
+
+### Reason to make changes
+
+- Checking mysql.h for my_bool to retain compatibility with older mysql versions
+- mysql2 '>= 0.5.5' compatiblity
+
 ## v2.5.0 - 2022-05-03
 
 ### Reason to make changes
@@ -20,7 +28,6 @@ This gem lives here https://github.com/infopark/mysql_blob_streaming.
     #include <stdbool.h>
     typedef bool my_bool;
   #endif
-
 
 ## v2.4.0 - 2021-03-23
 

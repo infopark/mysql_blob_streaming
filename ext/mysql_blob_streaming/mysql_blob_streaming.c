@@ -4,30 +4,35 @@
 #include <mysql.h>
 #include <errmsg.h>
 
-#if MYSQL_VERSION_ID >=80000 && MYSQL_VERSION_ID <80030
+/* MySQL 8.0 replaces my_bool with C99 bool. Earlier versions of MySQL had
+ * a typedef to char. Gem users reported failures on big endian systems when
+ * using C99 bool types with older MySQLs due to mismatched behavior.
+*/
+#ifndef HAVE_TYPE_MY_BOOL
   #include <stdbool.h>
   typedef bool my_bool;
 #endif
 
 typedef struct {
   VALUE encoding;
-  VALUE active_thread;
+  VALUE active_fiber; /* rb_fiber_current() or Qnil */
   long server_version;
   int reconnect_enabled;
-  int connect_timeout;
+  unsigned int connect_timeout;
   int active;
-  int connected;
+  int automatic_close;
   int initialized;
   int refcount;
-  int freed;
+  int closed;
   MYSQL *client;
 } mysql_client_wrapper;
 
+extern const rb_data_type_t rb_mysql_client_type;
 
 static MYSQL * mysql_connection(VALUE rb_mysql2_client)
 {
     mysql_client_wrapper *wrapper;
-    Data_Get_Struct(rb_mysql2_client, mysql_client_wrapper, wrapper);
+    TypedData_Get_Struct(rb_mysql2_client, mysql_client_wrapper, &rb_mysql_client_type, wrapper);
     return wrapper->client;
 }
 

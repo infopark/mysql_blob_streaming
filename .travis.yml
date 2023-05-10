@@ -1,5 +1,10 @@
 language: ruby
 rvm:
+  - "3.1.2"
+  - "3.0.4"
   - "2.7.5"
   - "2.6.9"
-
+jobs:
+  include:
+  - name: Specs
+    env: TASK='bundle exec rake'

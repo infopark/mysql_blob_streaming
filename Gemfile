@@ -4,6 +4,8 @@ source 'https://rubygems.org'
 gemspec
 
 # Dependencies for test environment
-gem "rake"
-gem "test-unit"
-gem "activerecord", "~> 5.2"
+group :test do
+  gem 'activerecord', '~> 6.0'
+  gem 'rake'
+  gem 'test-unit'
+end
