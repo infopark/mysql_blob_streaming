@@ -15,23 +15,24 @@
 
 typedef struct {
   VALUE encoding;
-  VALUE active_thread;
+  VALUE active_fiber; /* rb_fiber_current() or Qnil */
   long server_version;
   int reconnect_enabled;
-  int connect_timeout;
+  unsigned int connect_timeout;
   int active;
-  int connected;
+  int automatic_close;
   int initialized;
   int refcount;
-  int freed;
+  int closed;
   MYSQL *client;
 } mysql_client_wrapper;
 
+extern const rb_data_type_t rb_mysql_client_type;
 
 static MYSQL * mysql_connection(VALUE rb_mysql2_client)
 {
     mysql_client_wrapper *wrapper;
-    Data_Get_Struct(rb_mysql2_client, mysql_client_wrapper, wrapper);
+    TypedData_Get_Struct(rb_mysql2_client, mysql_client_wrapper, &rb_mysql_client_type, wrapper);
     return wrapper->client;
 }
 
